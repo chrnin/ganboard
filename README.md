@@ -3,7 +3,7 @@
 JSON-RPC client for Kanboard written in Golang
 Aims to implement every functions of Kanboard API
 
-```golang
+```go
 import (
     "github.com/davecgh/go-spew/spew"
 
@@ -21,7 +21,7 @@ func main() {
 }
 ```
 
-```json
+```go
 (ganboard.Project) {
  ID: (int) 1,
  Name: (string) (len=18) "My beloved Project",
