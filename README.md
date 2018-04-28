@@ -1,6 +1,7 @@
 # Ganboard
 
 JSON-RPC client for Kanboard written in Golang
+
 Aims to implement every functions of Kanboard API
 
 ```go
