@@ -1,7 +1,8 @@
 package ganboard
 
 import (
-	"io"
+	"bytes"
+	"encoding/json"
 	"net/http"
 )
 
@@ -13,8 +14,12 @@ type Client struct {
 }
 
 // Request sends jsonrpc request to kanboard and returns http.Response
-func (c *Client) Request(jsonrpc io.Reader) (*http.Response, error) {
+func (c *Client) Request(request request) (*http.Response, error) {
 	httpClient := &http.Client{}
+
+	jsonrpc := new(bytes.Buffer)
+	json.NewEncoder(jsonrpc).Encode(request)
+
 	req, err := http.NewRequest(
 		"POST",
 		c.Endpoint,
@@ -24,4 +29,17 @@ func (c *Client) Request(jsonrpc io.Reader) (*http.Response, error) {
 	req.SetBasicAuth(c.Username, c.Password)
 	rsp, err := httpClient.Do(req)
 	return rsp, err
+}
+
+type response struct {
+	JSONRPC string      `json:"jsonrpc"`
+	ID      int         `json:"id"`
+	Result  interface{} `json:"result"`
+}
+
+type request struct {
+	JSONRPC string      `json:"jsonrpc"`
+	Method  string      `json:"method"`
+	ID      string      `json:"id"`
+	Params  interface{} `json:"params,omitempty"`
 }
