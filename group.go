@@ -56,7 +56,7 @@ func (c *Client) RemoveGroup(groupID int) (bool, error) {
 func (c *Client) GetGroup(groupID int) (Group, error) {
 	request := request{
 		JSONRPC: "2.0",
-		Method:  "isActiveUser",
+		Method:  "getGroupd",
 		ID:      1,
 		Params: map[string]int{
 			"group_id": groupID,
@@ -80,6 +80,99 @@ func (c *Client) GetAllGroups() ([]Group, error) {
 
 	rsp, err := c.Request(request)
 	body := responseGroups{}
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
+}
+
+// GetMemberGroups https://docs.kanboard.org/en/latest/api/group_member_procedures.html#getmembergroups
+func (c *Client) GetMemberGroups(userID int) ([]Group, error) {
+	request := request{
+		JSONRPC: "2.0",
+		Method:  "getMemberGroups",
+		ID:      1,
+		Params: map[string]int{
+			"user_id": userID,
+		},
+	}
+
+	rsp, err := c.Request(request)
+	body := responseGroups{}
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
+}
+
+// GetGroupMembers https://docs.kanboard.org/en/latest/api/group_member_procedures.html#getgroupmembers
+func (c *Client) GetGroupMembers(groupID int) ([]User, error) {
+	request := request{
+		JSONRPC: "2.0",
+		Method:  "getGroupMembers",
+		ID:      1,
+		Params: map[string]int{
+			"group_id": groupID,
+		},
+	}
+
+	rsp, err := c.Request(request)
+	body := responseUsers{}
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
+}
+
+// AddGroupMember https://docs.kanboard.org/en/latest/api/group_member_procedures.html#addgroupmember
+func (c *Client) AddGroupMember(groupID int, userID int) (bool, error) {
+	request := request{
+		JSONRPC: "2.0",
+		Method:  "addGroupMember",
+		ID:      1,
+		Params: map[string]int{
+			"group_id": groupID,
+			"user_id":  userID,
+		},
+	}
+
+	rsp, err := c.Request(request)
+	body := responseBoolean{}
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
+}
+
+// RemoveGroupMember https://docs.kanboard.org/en/latest/api/group_member_procedures.html#removegroupmember
+func (c *Client) RemoveGroupMember(groupID int, userID int) (bool, error) {
+	request := request{
+		JSONRPC: "2.0",
+		Method:  "removeGroupMember",
+		ID:      1,
+		Params: map[string]int{
+			"group_id": groupID,
+			"user_id":  userID,
+		},
+	}
+
+	rsp, err := c.Request(request)
+	body := responseBoolean{}
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
+}
+
+// IsGroupMember https://docs.kanboard.org/en/latest/api/group_member_procedures.html#isgroupmember
+func (c *Client) IsGroupMember(groupID int, userID int) (bool, error) {
+	request := request{
+		JSONRPC: "2.0",
+		Method:  "isGroupMember",
+		ID:      1,
+		Params: map[string]int{
+			"group_id": groupID,
+			"user_id":  userID,
+		},
+	}
+
+	rsp, err := c.Request(request)
+	body := responseBoolean{}
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 
 	return body.Result, err
