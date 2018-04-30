@@ -187,6 +187,11 @@ type Task struct {
 	AssigneeName        string `json:"assignee_name"`
 	CreatorUsername     string `json:"creator_username"`
 	CreatorName         string `json:"creator_name"`
+	NbComments          int    `json:"nb_comments,string"`
+	NbFiles             int    `json:"nb_files,string"`
+	NbSubtasks          int    `json:"nb_subtasks,string"`
+	NbCompletedSubtasks int    `json:"nb_completed_subtasks,string"`
+	NbLinks             int    `json:"nb_links,string"`
 }
 
 // Activity type
