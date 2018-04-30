@@ -148,52 +148,6 @@ type Dashboard struct {
 	SubTasks interface{} `json:"subtasks"`
 }
 
-// Task type
-type Task struct {
-	ID                  int    `json:"id,string"`
-	Reference           string `json:"reference"`
-	Title               string `json:"title"`
-	Description         string `json:"description"`
-	DateCreation        int    `json:"date_creation,string"`
-	DateCompleted       int    `json:"date_completed,string"`
-	DateModification    int    `json:"date_modification,string"`
-	DateDue             int    `json:"date_due,string"`
-	DateStarted         int    `json:"date_started,string"`
-	TimeEstimated       int    `json:"time_estimated,string"`
-	TimeSpent           int    `json:"time_spend,string"`
-	ColorID             string `json:"color_id"`
-	ProjectID           int    `json:"project_id,string"`
-	ColumnID            int    `json:"column_id,string"`
-	OwnerID             int    `json:"owner_id,string"`
-	CreatorID           int    `json:"creator_id,string"`
-	Position            int    `json:"position,string"`
-	IsActive            int    `json:"is_active,string"`
-	Score               int    `json:"score,string"`
-	CategoryID          int    `json:"category_id,string"`
-	SwimlaneID          int    `json:"swimlane_id,string"`
-	DateMoved           int    `json:"date_moved"`
-	RecurrenceStatus    int    `json:"recurrence_status,string"`
-	RecurrenceTrigger   int    `json:"recurrence_trigger,string"`
-	RecurrenceFactor    int    `json:"recurrence_factor,string"`
-	RecurrenceTimeframe int    `json:"recurrence_timeframe,string"`
-	RecurrenceBaseDate  int    `json:"recurrence_basedate,string"`
-	RecurrenceParent    int    `json:"recurrence_parent,string"`
-	RecurrenceChild     int    `json:"recurrence_child,string"`
-	CategoryName        string `json:"category_name"`
-	ProjectName         string `json:"project_name"`
-	DefaultSwimlane     string `json:"default_swimlane"`
-	ColumnTitle         string `json:"column_title"`
-	AssigneeUsername    string `json:"assignee_username"`
-	AssigneeName        string `json:"assignee_name"`
-	CreatorUsername     string `json:"creator_username"`
-	CreatorName         string `json:"creator_name"`
-	NbComments          int    `json:"nb_comments,string"`
-	NbFiles             int    `json:"nb_files,string"`
-	NbSubtasks          int    `json:"nb_subtasks,string"`
-	NbCompletedSubtasks int    `json:"nb_completed_subtasks,string"`
-	NbLinks             int    `json:"nb_links,string"`
-}
-
 // Activity type
 // FIXME no information on Changes structure
 type Activity struct {
