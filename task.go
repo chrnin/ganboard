@@ -290,7 +290,7 @@ type MoveTaskParams struct {
 	SwimlaneID int `json:"swimlane_id,string,omitempty"`
 	ColumnID   int `json:"column_id,string,omitempty"`
 	CategoryID int `json:"category_id,string,omitempty"`
-	OwnerID    int `json:"ownser_id,string,omitempty"`
+	OwnerID    int `json:"owner_id,string,omitempty"`
 }
 
 // Task type
