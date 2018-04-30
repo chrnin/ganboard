@@ -49,6 +49,12 @@ type responseString struct {
 	Result  string `json:"result"`
 }
 
+type responseBoolean struct {
+	JSONRPC string `json:"jsonrpc"`
+	ID      int    `json:"id"`
+	Result  bool   `json:"result"`
+}
+
 type request struct {
 	JSONRPC string      `json:"jsonrpc"`
 	Method  string      `json:"method"`

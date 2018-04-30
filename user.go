@@ -1,15 +1,50 @@
 package ganboard
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
-// GetMe https://docs.kanboard.org/en/latest/api/me_procedures.html#getme
-func (c *Client) GetMe() (User, error) {
+// CreateUser https://docs.kanboard.org/en/latest/api/user_procedures.html#createuser
+func (c *Client) CreateUser(params UserParams) (int, error) {
 	request := request{
 		JSONRPC: "2.0",
-		Method:  "getMe",
+		Method:  "createUser",
 		ID:      1,
+		Params:  params,
+	}
+
+	rsp, err := c.Request(request)
+	body := responseInt{}
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
+}
+
+// CreateLdapUser https://docs.kanboard.org/en/latest/api/user_procedures.html#CreateLdapUser
+func (c *Client) CreateLdapUser(username string) (int, error) {
+	request := request{
+		JSONRPC: "2.0",
+		Method:  "createLdapUser",
+		ID:      1,
+		Params: map[string]string{
+			"username": username,
+		},
+	}
+
+	rsp, err := c.Request(request)
+	body := responseInt{}
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
+}
+
+// GetUser https://docs.kanboard.org/en/latest/api/user_procedures.html#getuser
+func (c *Client) GetUser(userID int) (User, error) {
+	request := request{
+		JSONRPC: "2.0",
+		Method:  "getUser",
+		ID:      1,
+		Params: map[string]int{
+			"user_id": userID,
+		},
 	}
 
 	rsp, err := c.Request(request)
@@ -19,180 +54,134 @@ func (c *Client) GetMe() (User, error) {
 	return body.Result, err
 }
 
-// GetMyDashboard https://docs.kanboard.org/en/latest/api/me_procedures.html#getmydashboard
-// FIXME documentation doesn't fit result.
-func (c *Client) GetMyDashboard() (interface{}, error) {
+// GetUserByName https://docs.kanboard.org/en/latest/api/user_procedures.html#getuserbyname
+func (c *Client) GetUserByName(username string) (User, error) {
 	request := request{
 		JSONRPC: "2.0",
-		Method:  "getMyDashboard",
+		Method:  "getUserByName",
 		ID:      1,
+		Params: map[string]string{
+			"username": username,
+		},
+	}
+
+	rsp, err := c.Request(request)
+	body := responseUser{}
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
+}
+
+// GetAllUsers https://docs.kanboard.org/en/latest/api/user_procedures.html#getallusers
+func (c *Client) GetAllUsers() ([]User, error) {
+	request := request{
+		JSONRPC: "2.0",
+		Method:  "getAllUsers",
+		ID:      1,
+	}
+
+	rsp, err := c.Request(request)
+	body := responseUsers{}
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
+}
+
+// UpdateUser https://docs.kanboard.org/en/latest/api/user_procedures.html#updateuser
+func (c *Client) UpdateUser(params UserParams) (int, error) {
+	request := request{
+		JSONRPC: "2.0",
+		Method:  "updateUser",
+		ID:      1,
+		Params:  params,
 	}
 
 	rsp, err := c.Request(request)
 	body := responseInt{}
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 
-	return body, err
+	return body.Result, err
 }
 
-// GetMyActivityStream https://docs.kanboard.org/en/latest/api/me_procedures.html#getmyactivitystream
-func (c *Client) GetMyActivityStream() ([]Activity, error) {
+// RemoveUser https://docs.kanboard.org/en/latest/api/user_procedures.html#removeuser
+func (c *Client) RemoveUser(userID int) (bool, error) {
 	request := request{
 		JSONRPC: "2.0",
-		Method:  "getMyActivityStream",
+		Method:  "removeUser",
 		ID:      1,
+		Params: map[string]int{
+			"user_id": userID,
+		},
 	}
 
 	rsp, err := c.Request(request)
-	body := responseActivityStream{}
+	body := responseBoolean{}
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 
 	return body.Result, err
 }
 
-// CreateMyPrivateProject https://docs.kanboard.org/en/latest/api/me_procedures.html#createmyprivateproject
-func (c *Client) CreateMyPrivateProject(params PrivateProjectParams) (int, error) {
+// DisableUser https://docs.kanboard.org/en/latest/api/user_procedures.html#disableuser
+func (c *Client) DisableUser(userID int) (bool, error) {
 	request := request{
 		JSONRPC: "2.0",
-		Method:  "createMyPrivateProject",
+		Method:  "disableUser",
 		ID:      1,
-		Params:  params,
+		Params: map[string]int{
+			"user_id": userID,
+		},
 	}
 
 	rsp, err := c.Request(request)
-	body := response{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result.(int), err
-}
-
-// GetMyProjectList https://docs.kanboard.org/en/latest/api/me_procedures.html#getmyprojectslist
-func (c *Client) GetMyProjectList() (map[int]string, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getMyProjectsList",
-		ID:      1,
-	}
-
-	rsp, err := c.Request(request)
-	body := responseProjectList{}
+	body := responseBoolean{}
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 
 	return body.Result, err
 }
 
-// GetMyOverDueTasks https://docs.kanboard.org/en/latest/api/me_procedures.html#getmyoverduetasks
-func (c *Client) GetMyOverDueTasks() ([]Task, error) {
+// EnableUser https://docs.kanboard.org/en/latest/api/user_procedures.html#enableuser
+func (c *Client) EnableUser(userID int) (bool, error) {
 	request := request{
 		JSONRPC: "2.0",
-		Method:  "getMyOverDueTasks",
+		Method:  "enableUser",
 		ID:      1,
+		Params: map[string]int{
+			"user_id": userID,
+		},
 	}
 
 	rsp, err := c.Request(request)
-	body := responseOverdueTasks{}
+	body := responseBoolean{}
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 
 	return body.Result, err
 }
 
-// GetMyProjects https://docs.kanboard.org/en/latest/api/me_procedures.html#getmyprojects
-func (c *Client) GetMyProjects() ([]Project, error) {
+// IsActiveUser https://docs.kanboard.org/en/latest/api/user_procedures.html#isactiveuser
+func (c *Client) IsActiveUser(userID int) (bool, error) {
 	request := request{
 		JSONRPC: "2.0",
-		Method:  "getMyProjects",
+		Method:  "isActiveUser",
 		ID:      1,
+		Params: map[string]int{
+			"user_id": userID,
+		},
 	}
 
 	rsp, err := c.Request(request)
-	body := responseProjects{}
+	body := responseBoolean{}
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 
 	return body.Result, err
 }
 
-// PrivateProjectParams parameters for CreateMyPrivateProject
-type PrivateProjectParams struct {
-	Name        string `json:"name"`
-	Description string `json:"description,omitempty"`
-}
-
-type responseOverdueTasks struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  []Task `json:"result"`
-}
-
-type responseProjectList struct {
-	JSONRPC string         `json:"jsonrpc"`
-	ID      int            `json:"id"`
-	Result  map[int]string `json:"result"`
-}
-
-type responseDashboard struct {
-	JSONRPC string    `json:"jsonrpc"`
-	ID      int       `json:"id"`
-	Result  Dashboard `json:"result"`
-}
-
-type responseActivityStream struct {
-	JSONRPC string     `json:"jsonrpc"`
-	ID      int        `json:"id"`
-	Result  []Activity `json:"result"`
-}
-
-// Dashboard type
-type Dashboard struct {
-	Projects []Project   `json:"projects"`
-	Tasks    []Task      `json:"tasks"`
-	SubTasks interface{} `json:"subtasks"`
-}
-
-// Task type
-type Task struct {
-	ID                  int    `json:"id,string"`
-	Reference           string `json:"reference"`
-	Title               string `json:"title"`
-	Description         string `json:"description"`
-	DateCreation        int    `json:"date_creation,string"`
-	DateCompleted       int    `json:"date_completed,string"`
-	DateModification    int    `json:"date_modification,string"`
-	DateDue             int    `json:"date_due,string"`
-	DateStarted         int    `json:"date_started,string"`
-	TimeEstimated       int    `json:"time_estimated,string"`
-	TimeSpent           int    `json:"time_spend,string"`
-	ColorID             string `json:"color_id"`
-	ProjectID           int    `json:"project_id,string"`
-	ColumnID            int    `json:"column_id,string"`
-	OwnerID             int    `json:"owner_id,string"`
-	CreatorID           int    `json:"creator_id,string"`
-	Position            int    `json:"position,string"`
-	IsActive            int    `json:"is_active,string"`
-	Score               int    `json:"score,string"`
-	CategoryID          int    `json:"category_id,string"`
-	SwimlaneID          int    `json:"swimlane_id,string"`
-	DateMoved           int    `json:"date_moved"`
-	RecurrenceStatus    int    `json:"recurrence_status,string"`
-	RecurrenceTrigger   int    `json:"recurrence_trigger,string"`
-	RecurrenceFactor    int    `json:"recurrence_factor,string"`
-	RecurrenceTimeframe int    `json:"recurrence_timeframe,string"`
-	RecurrenceBaseDate  int    `json:"recurrence_basedate,string"`
-	RecurrenceParent    int    `json:"recurrence_parent,string"`
-	RecurrenceChild     int    `json:"recurrence_child,string"`
-	CategoryName        string `json:"category_name"`
-	ProjectName         string `json:"project_name"`
-	DefaultSwimlane     string `json:"default_swimlane"`
-	ColumnTitle         string `json:"column_title"`
-	AssigneeUsername    string `json:"assignee_username"`
-	AssigneeName        string `json:"assignee_name"`
-	CreatorUsername     string `json:"creator_username"`
-	CreatorName         string `json:"creator_name"`
-}
-
-type responseUser struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  User   `json:"result"`
+// UserParams input for CreateUser
+type UserParams struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Name     string `json:"Name,omitempty"`
+	Email    string `json:"email,omitempty"`
+	Role     string `json:"role,omitempty"`
 }
 
 // User type
@@ -215,21 +204,14 @@ type User struct {
 	NotificationsFilter  int    `json:"notifications_filter,string"`
 }
 
-// Activity type
-// FIXME no information on Changes structure
-type Activity struct {
-	ID             int           `json:"id,string"`
-	DateCreation   int           `json:"date_creation,string"`
-	EventName      string        `json:"event_name"`
-	CreatorID      int           `json:"creator_id,string"`
-	ProjectID      int           `json:"project_id,string"`
-	TaskID         int           `json:"task_id,string"`
-	AuthorUsername string        `json:"author_username"`
-	AuthorName     string        `json:"author_name"`
-	Email          string        `json:"email"`
-	Task           Task          `json:"task"`
-	Changes        []interface{} `json:"changes"`
-	Author         string        `json:"author"`
-	EventTitle     string        `json:"event_title"`
-	EventContent   string        `json:"event_content"`
+type responseUser struct {
+	JSONRPC string `json:"jsonrpc"`
+	ID      int    `json:"id"`
+	Result  User   `json:"result"`
+}
+
+type responseUsers struct {
+	JSONRPC string `json:"jsonrpc"`
+	ID      int    `json:"id"`
+	Result  []User `json:"result"`
 }
