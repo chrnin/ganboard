@@ -88,7 +88,7 @@ func (c *Client) CreateAction(params ActionParams) (int, error) {
 func (c *Client) RemoveAction(actionID int) (bool, error) {
 	r := request{
 		JSONRPC: "2.0",
-		Method:  "remonveAction",
+		Method:  "removeAction",
 		ID:      1,
 		Params: map[string]int{
 			"action_id": actionID,
