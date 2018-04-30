@@ -55,6 +55,12 @@ type responseBoolean struct {
 	Result  bool   `json:"result"`
 }
 
+type responseMapStringString struct {
+	JSONRPC string            `json:"jsonrpc"`
+	ID      int               `json:"id"`
+	Result  map[string]string `json:"result"`
+}
+
 type request struct {
 	JSONRPC string      `json:"jsonrpc"`
 	Method  string      `json:"method"`
