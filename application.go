@@ -9,7 +9,7 @@ func (c *Client) GetVersion() (string, error) {
 	request := request{
 		JSONRPC: "2.0",
 		Method:  "getTimezone",
-		ID:      "1",
+		ID:      1,
 	}
 
 	rsp, err := c.Request(request)
@@ -24,7 +24,7 @@ func (c *Client) GetTimezone() (string, error) {
 	request := request{
 		JSONRPC: "2.0",
 		Method:  "getVersion",
-		ID:      "1",
+		ID:      1,
 	}
 
 	rsp, err := c.Request(request)
@@ -39,7 +39,7 @@ func (c *Client) GetDefaultTaskColors() (map[string]Color, error) {
 	request := request{
 		JSONRPC: "2.0",
 		Method:  "getDefaultTaskColors",
-		ID:      "1",
+		ID:      1,
 	}
 
 	rsp, err := c.Request(request)
@@ -54,7 +54,7 @@ func (c *Client) GetDefaultTaskColor() (string, error) {
 	request := request{
 		JSONRPC: "2.0",
 		Method:  "getDefaultTaskColor",
-		ID:      "1",
+		ID:      1,
 	}
 
 	rsp, err := c.Request(request)
@@ -69,7 +69,7 @@ func (c *Client) GetColorList() (map[string]string, error) {
 	request := request{
 		JSONRPC: "2.0",
 		Method:  "getColorList",
-		ID:      "1",
+		ID:      1,
 	}
 
 	rsp, err := c.Request(request)
@@ -84,7 +84,7 @@ func (c *Client) GetApplicationRoles() (map[string]string, error) {
 	request := request{
 		JSONRPC: "2.0",
 		Method:  "getApplicationRoles",
-		ID:      "1",
+		ID:      1,
 	}
 
 	rsp, err := c.Request(request)
@@ -99,7 +99,7 @@ func (c *Client) GetProjectRoles() (map[string]string, error) {
 	request := request{
 		JSONRPC: "2.0",
 		Method:  "getProjectRoles",
-		ID:      "1",
+		ID:      1,
 	}
 
 	rsp, err := c.Request(request)

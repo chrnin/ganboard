@@ -37,9 +37,21 @@ type response struct {
 	Result  interface{} `json:"result"`
 }
 
+type responseInt struct {
+	JSONRPC string `json:"jsonrpc"`
+	ID      int    `json:"id"`
+	Result  int    `json:"result"`
+}
+
+type responseString struct {
+	JSONRPC string `json:"jsonrpc"`
+	ID      int    `json:"id"`
+	Result  string `json:"result"`
+}
+
 type request struct {
 	JSONRPC string      `json:"jsonrpc"`
 	Method  string      `json:"method"`
-	ID      string      `json:"id"`
+	ID      int         `json:"id,string"`
 	Params  interface{} `json:"params,omitempty"`
 }
