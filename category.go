@@ -4,10 +4,9 @@ import "encoding/json"
 
 // CreateCategory https://docs.kanboard.org/en/latest/api/category_procedures.html
 func (c *Client) CreateCategory(projectID int, name string) (int, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "createCategory",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "createCategory",
 		Params: struct {
 			ProjectID int    `json:"project_id"`
 			Name      string `json:"name"`
@@ -16,56 +15,41 @@ func (c *Client) CreateCategory(projectID int, name string) (int, error) {
 			Name:      name,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // GetCategory https://docs.kanboard.org/en/latest/api/category_procedures.html#getcategory
 func (c *Client) GetCategory(categoryID int) (Category, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getCategory",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getCategory",
 		Params: map[string]int{
 			"category_id": categoryID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseCategory{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeCategory()
+	return response, err
 }
 
 // GetAllCategories https://docs.kanboard.org/en/latest/api/category_procedures.html#getallcategories
 func (c *Client) GetAllCategories(projectID int) ([]Category, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getAllCategory",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getAllCategory",
 		Params: map[string]int{
 			"project_id": projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseCategories{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeCategories()
+	return response, err
 }
 
 // UpdateCategory https://docs.kanboard.org/en/latest/api/category_procedures.html#updatecategory
 func (c *Client) UpdateCategory(categoryID int, name string) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "updateCategory",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "updateCategory",
 		Params: struct {
 			ID   int    `json:"id,string"`
 			Name string `json:"name"`
@@ -74,30 +58,21 @@ func (c *Client) UpdateCategory(categoryID int, name string) (bool, error) {
 			Name: name,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // RemoveCategory https://docs.kanboard.org/en/latest/api/category_procedures.html#removecategory
 func (c *Client) RemoveCategory(categoryID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "removeCategory",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "removeCategory",
 		Params: map[string]int{
 			"category_id": categoryID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // Category type
@@ -107,14 +82,34 @@ type Category struct {
 	ProjectID int    `json:"project_id"`
 }
 
-type responseCategory struct {
-	JSONRPC string   `json:"jsonrpc"`
-	ID      int      `json:"id"`
-	Result  Category `json:"result"`
+func (r *request) decodeCategory() (Category, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return Category{}, err
+	}
+
+	body := struct {
+		JSONRPC string   `json:"jsonrpc"`
+		ID      int      `json:"id"`
+		Result  Category `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }
 
-type responseCategories struct {
-	JSONRPC string     `json:"jsonrpc"`
-	ID      int        `json:"id"`
-	Result  []Category `json:"result"`
+func (r *request) decodeCategories() ([]Category, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string     `json:"jsonrpc"`
+		ID      int        `json:"id"`
+		Result  []Category `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }

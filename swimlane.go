@@ -4,82 +4,61 @@ import "encoding/json"
 
 // GetActiveSwimlanes https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#swimlane-api-procedures
 func (c *Client) GetActiveSwimlanes(projectID int) ([]Swimlane, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getActiveSwimlanes",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getActiveSwimlanes",
 		Params: map[string]int{
 			"project_id": projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseSwimlanes{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeSwimlanes()
+	return response, err
 }
 
 // GetAllSwimlanes https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#getallswimlanes
 func (c *Client) GetAllSwimlanes(projectID int) ([]Swimlane, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getAllSwimlanes",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getAllSwimlanes",
 		Params: map[string]int{
 			"project_id": projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseSwimlanes{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeSwimlanes()
+	return response, err
 }
 
 // GetSwimlane https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#getswimlane
 func (c *Client) GetSwimlane(swimlaneID int) (Swimlane, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getSwimlane",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getSwimlane",
 		Params: map[string]int{
 			"swimlane_id": swimlaneID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseSwimlane{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeSwimlane()
+	return response, err
 }
 
 // GetSwimlaneByID https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#getswimlanebyid
 func (c *Client) GetSwimlaneByID(swimlaneID int) (Swimlane, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getSwimlaneById",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getSwimlaneById",
 		Params: map[string]int{
 			"swimlane_id": swimlaneID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseSwimlane{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeSwimlane()
+	return response, err
 }
 
 // GetSwimlaneByName https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#getswimlanebyname
 func (c *Client) GetSwimlaneByName(projectID int, name string) (Swimlane, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getSwimlaneByName",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getSwimlaneByName",
 		Params: struct {
 			ProjectID int    `json:"project_id"`
 			Name      string `json:"Name"`
@@ -88,121 +67,87 @@ func (c *Client) GetSwimlaneByName(projectID int, name string) (Swimlane, error)
 			Name:      name,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseSwimlane{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeSwimlane()
+	return response, err
 }
 
 // ChangeSwimlanePosition https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#changeswimlaneposition
 func (c *Client) ChangeSwimlanePosition(projectID int, swimlaneID int, position int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getSwimlaneByName",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getSwimlaneByName",
 		Params: map[string]int{
 			"project_id":  projectID,
 			"swimlane_id": swimlaneID,
 			"position":    position,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // UpdateSwimlane https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#updateswimlane
 func (c *Client) UpdateSwimlane(params SwimlaneParams) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getSwimlaneByName",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "getSwimlaneByName",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // AddSwimlane https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#addswimlane
 func (c *Client) AddSwimlane(params SwimlaneParams) (int, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "AddSwimlane",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "AddSwimlane",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // RemoveSwimlane https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#removeswimlane
 func (c *Client) RemoveSwimlane(projectID int, swimlaneID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "RemoveSwimlane",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "RemoveSwimlane",
 		Params: map[string]int{
 			"project_id":  projectID,
 			"swimlane_id": swimlaneID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // DisableSwimlane https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#disableswimlane
 func (c *Client) DisableSwimlane(projectID int, swimlaneID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "DisableSwimlane",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "DisableSwimlane",
 		Params: map[string]int{
 			"project_id":  projectID,
 			"swimlane_id": swimlaneID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // EnableSwimlane https://docs.kanboard.org/en/latest/api/swimlane_procedures.html#enableswimlane
 func (c *Client) EnableSwimlane(projectID int, swimlaneID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "EnableSwimlane",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "EnableSwimlane",
 		Params: map[string]int{
 			"project_id":  projectID,
 			"swimlane_id": swimlaneID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // Swimlane type
@@ -232,4 +177,36 @@ type responseSwimlane struct {
 	JSONRPC string   `json:"jsonrpc"`
 	ID      int      `json:"id"`
 	Result  Swimlane `json:"result"`
+}
+
+func (r *request) decodeSwimlanes() ([]Swimlane, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string     `json:"jsonrpc"`
+		ID      int        `json:"id"`
+		Result  []Swimlane `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
+}
+
+func (r *request) decodeSwimlane() (Swimlane, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return Swimlane{}, err
+	}
+
+	body := struct {
+		JSONRPC string   `json:"jsonrpc"`
+		ID      int      `json:"id"`
+		Result  Swimlane `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }

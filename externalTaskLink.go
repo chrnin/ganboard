@@ -4,43 +4,32 @@ import "encoding/json"
 
 // GetExternalTaskLinkTypes https://docs.kanboard.org/en/latest/api/external_task_link_procedures.html#getexternaltasklinktypes
 func (c *Client) GetExternalTaskLinkTypes() (map[string]string, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getExternalTaskLinkTypes",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getExternalTaskLinkTypes",
 	}
-
-	rsp, err := c.Request(r)
-	body := responseMapStringString{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeMapStringString()
+	return response, err
 }
 
 // GetExternalTaskLinkProviderDependencies https://docs.kanboard.org/en/latest/api/external_task_link_procedures.html#getexternaltasklinkproviderdependencies
 func (c *Client) GetExternalTaskLinkProviderDependencies(providerName string) (map[string]string, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getExternalTaskLinkProviderDependencies",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getExternalTaskLinkProviderDependencies",
 		Params: map[string]string{
 			"providerName": providerName,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseMapStringString{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeMapStringString()
+	return response, err
 }
 
 // CreateExternalTaskLink https://docs.kanboard.org/en/latest/api/external_task_link_procedures.html#createexternaltasklink
-func (c *Client) CreateExternalTaskLink(taskID int, url string, dependency string, typeTask string, title string) (int, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "createExternalTaskLink",
-		ID:      1,
+func (c *Client) CreateExternalTaskLink(taskID int, url string, dependency string, taskType string, title string) (int, error) {
+	query := request{
+		Client: c,
+		Method: "createExternalTaskLink",
 		Params: struct {
 			TaskID     int    `json:"task_id,string"`
 			URL        string `json:"url"`
@@ -51,24 +40,19 @@ func (c *Client) CreateExternalTaskLink(taskID int, url string, dependency strin
 			TaskID:     taskID,
 			URL:        url,
 			Dependency: dependency,
-			TypeTask:   typeTask,
+			TypeTask:   taskType,
 			Title:      title,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // UpdateExternalTaskLink https://docs.kanboard.org/en/latest/api/external_task_link_procedures.html#updateexternaltasklink
 func (c *Client) UpdateExternalTaskLink(taskID int, linkID int, title string, url string, dependency string) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "updateExternalTaskLink",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "updateExternalTaskLink",
 		Params: struct {
 			TaskID     int    `json:"task_id,string"`
 			LinkID     int    `json:"link_id,string"`
@@ -83,72 +67,53 @@ func (c *Client) UpdateExternalTaskLink(taskID int, linkID int, title string, ur
 			LinkID:     linkID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // GetExternalTaskLinkByID https://docs.kanboard.org/en/latest/api/external_task_link_procedures.html#getexternaltasklinkbyid
-func (c *Client) GetExternalTaskLinkByID(taskID int, linkID int) (Link, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getExternalTaskLinkById",
-		ID:      1,
+func (c *Client) GetExternalTaskLinkByID(taskID int, linkID int) (ExternalLink, error) {
+	query := request{
+		Client: c,
+		Method: "getExternalTaskLinkById",
 		Params: map[string]int{
 			"task_id": taskID,
 			"link_id": linkID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseLink{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeExternalLink()
+	return response, err
 }
 
 // GetAllExternalTaskLinks https://docs.kanboard.org/en/latest/api/external_task_link_procedures.html#getallexternaltasklinks
-func (c *Client) GetAllExternalTaskLinks(taskID int) ([]Link, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getAllExternalTaskLinks",
-		ID:      1,
+func (c *Client) GetAllExternalTaskLinks(taskID int) ([]ExternalLink, error) {
+	query := request{
+		Client: c,
+		Method: "getAllExternalTaskLinks",
 		Params: map[string]int{
 			"task_id": taskID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseLinks{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeExternalLinks()
+	return response, err
 }
 
 // RemoveExternalTaskLink https://docs.kanboard.org/en/latest/api/external_task_link_procedures.html#removeexternaltasklink
 func (c *Client) RemoveExternalTaskLink(taskID int, linkID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "removeExternalTaskLink",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "removeExternalTaskLink",
 		Params: map[string]int{
 			"task_id": taskID,
 			"link_id": linkID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
-// Link for external tasks type
-type Link struct {
+// ExternalLink type for external tasks links
+type ExternalLink struct {
 	ID               int    `json:"id,string"`
 	LinkType         string `json:"link_type"`
 	Dependency       string `json:"dependency"`
@@ -160,14 +125,38 @@ type Link struct {
 	CreatorID        int    `json:"create_id,string"`
 }
 
-type responseLink struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  Link   `json:"result"`
+func (r *request) decodeExternalLink() (ExternalLink, error) {
+	rsp, err := r.Client.Request(*r)
+
+	if err != nil {
+		return ExternalLink{}, err
+	}
+
+	body := struct {
+		JSONRPC string       `json:"jsonrpc"`
+		ID      int          `json:"id"`
+		Result  ExternalLink `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
 }
 
-type responseLinks struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  []Link `json:"result"`
+func (r *request) decodeExternalLinks() ([]ExternalLink, error) {
+	rsp, err := r.Client.Request(*r)
+
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string         `json:"jsonrpc"`
+		ID      int            `json:"id"`
+		Result  []ExternalLink `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+
+	return body.Result, err
 }

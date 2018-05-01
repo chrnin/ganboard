@@ -4,175 +4,125 @@ import "encoding/json"
 
 // CreateUser https://docs.kanboard.org/en/latest/api/user_procedures.html#createuser
 func (c *Client) CreateUser(params UserParams) (int, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "createUser",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "createUser",
+		Params: params,
 	}
-
-	rsp, err := c.Request(request)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // CreateLdapUser https://docs.kanboard.org/en/latest/api/user_procedures.html#CreateLdapUser
 func (c *Client) CreateLdapUser(username string) (int, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "createLdapUser",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "createLdapUser",
 		Params: map[string]string{
 			"username": username,
 		},
 	}
-
-	rsp, err := c.Request(request)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // GetUser https://docs.kanboard.org/en/latest/api/user_procedures.html#getuser
 func (c *Client) GetUser(userID int) (User, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getUser",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getUser",
 		Params: map[string]int{
 			"user_id": userID,
 		},
 	}
-
-	rsp, err := c.Request(request)
-	body := responseUser{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeUser()
+	return response, err
 }
 
 // GetUserByName https://docs.kanboard.org/en/latest/api/user_procedures.html#getuserbyname
 func (c *Client) GetUserByName(username string) (User, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getUserByName",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getUserByName",
 		Params: map[string]string{
 			"username": username,
 		},
 	}
-
-	rsp, err := c.Request(request)
-	body := responseUser{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeUser()
+	return response, err
 }
 
 // GetAllUsers https://docs.kanboard.org/en/latest/api/user_procedures.html#getallusers
 func (c *Client) GetAllUsers() ([]User, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getAllUsers",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getAllUsers",
 	}
-
-	rsp, err := c.Request(request)
-	body := responseUsers{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeUsers()
+	return response, err
 }
 
 // UpdateUser https://docs.kanboard.org/en/latest/api/user_procedures.html#updateuser
 func (c *Client) UpdateUser(params UserParams) (int, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "updateUser",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "updateUser",
+		Params: params,
 	}
-
-	rsp, err := c.Request(request)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // RemoveUser https://docs.kanboard.org/en/latest/api/user_procedures.html#removeuser
 func (c *Client) RemoveUser(userID int) (bool, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "removeUser",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "removeUser",
 		Params: map[string]int{
 			"user_id": userID,
 		},
 	}
-
-	rsp, err := c.Request(request)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // DisableUser https://docs.kanboard.org/en/latest/api/user_procedures.html#disableuser
 func (c *Client) DisableUser(userID int) (bool, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "disableUser",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "disableUser",
 		Params: map[string]int{
 			"user_id": userID,
 		},
 	}
-
-	rsp, err := c.Request(request)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // EnableUser https://docs.kanboard.org/en/latest/api/user_procedures.html#enableuser
 func (c *Client) EnableUser(userID int) (bool, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "enableUser",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "enableUser",
 		Params: map[string]int{
 			"user_id": userID,
 		},
 	}
-
-	rsp, err := c.Request(request)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // IsActiveUser https://docs.kanboard.org/en/latest/api/user_procedures.html#isactiveuser
 func (c *Client) IsActiveUser(userID int) (bool, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "isActiveUser",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "isActiveUser",
 		Params: map[string]int{
 			"user_id": userID,
 		},
 	}
-
-	rsp, err := c.Request(request)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // UserParams input for CreateUser
@@ -204,14 +154,34 @@ type User struct {
 	NotificationsFilter  int    `json:"notifications_filter,string"`
 }
 
-type responseUser struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  User   `json:"result"`
+func (r *request) decodeUser() (User, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return User{}, err
+	}
+
+	body := struct {
+		JSONRPC string `json:"jsonrpc"`
+		ID      int    `json:"id"`
+		Result  User   `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }
 
-type responseUsers struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  []User `json:"result"`
+func (r *request) decodeUsers() ([]User, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string `json:"jsonrpc"`
+		ID      int    `json:"id"`
+		Result  []User `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }

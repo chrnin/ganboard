@@ -7,44 +7,33 @@ import (
 
 // CreateTask https://docs.kanboard.org/en/latest/api/task_procedures.html#createtask
 func (c *Client) CreateTask(params TaskParams) (int, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "createTask",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "createTask",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // GetTask https://docs.kanboard.org/en/latest/api/task_procedures.html#gettask
 func (c *Client) GetTask(taskID int) (Task, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getTask",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getTask",
 		Params: map[string]int{
 			"task_id": taskID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseTask{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeTask()
+	return response, err
 }
 
 // GetTaskByReference https://docs.kanboard.org/en/latest/api/task_procedures.html#gettaskbyreference
 func (c *Client) GetTaskByReference(taskID int, reference string) (Task, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getTaskByReference",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getTaskByReference",
 		Params: struct {
 			TaskID    int    `json:"task_id"`
 			Reference string `json:"reference"`
@@ -53,142 +42,102 @@ func (c *Client) GetTaskByReference(taskID int, reference string) (Task, error) 
 			Reference: reference,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseTask{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeTask()
+	return response, err
 }
 
 // GetAllTasks https://docs.kanboard.org/en/latest/api/task_procedures.html#getalltasks
 func (c *Client) GetAllTasks(projectID int, statusID int) ([]Task, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getAllTasks",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getAllTasks",
 		Params: map[string]int{
 			"project_id": projectID,
 			"status_id":  statusID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseTasks{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeTasks()
+	return response, err
 }
 
 // GetOverdueTasks https://docs.kanboard.org/en/latest/api/task_procedures.html#getoverduetasks
 func (c *Client) GetOverdueTasks() ([]Task, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getOverdueTasks",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getOverdueTasks",
 	}
-
-	rsp, err := c.Request(r)
-	body := responseTasks{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeTasks()
+	return response, err
 }
 
 // GetOverdueTasksByProject https://docs.kanboard.org/en/latest/api/task_procedures.html#getoverduetasksbyproject
 func (c *Client) GetOverdueTasksByProject(projectID int) ([]Task, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getOverdueTasksByProject",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getOverdueTasksByProject",
 		Params: map[string]int{
 			"project_id": projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseTasks{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeTasks()
+	return response, err
 }
 
 // UpdateTask https://docs.kanboard.org/en/latest/api/task_procedures.html#updatetask
 func (c *Client) UpdateTask(params TaskParams) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "updateTask",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "updateTask",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // OpenTask https://docs.kanboard.org/en/latest/api/task_procedures.html#opentask
 func (c *Client) OpenTask(taskID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "openTask",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "openTask",
 		Params: map[string]int{
 			"task_id": taskID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // CloseTask https://docs.kanboard.org/en/latest/api/task_procedures.html#closetask
 func (c *Client) CloseTask(taskID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "closeTask",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "closeTask",
 		Params: map[string]int{
 			"task_id": taskID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // RemoveTask https://docs.kanboard.org/en/latest/api/task_procedures.html#removetask
 func (c *Client) RemoveTask(taskID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "removeTask",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "removeTask",
 		Params: map[string]int{
 			"task_id": taskID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // MoveTaskPosition https://docs.kanboard.org/en/latest/api/task_procedures.html#movetaskposition
 func (c *Client) MoveTaskPosition(projectID int, taskID int, columnID int, position int, swimlaneID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "moveTaskPosition",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "moveTaskPosition",
 		Params: map[string]int{
 			"project_id":  projectID,
 			"task_id":     taskID,
@@ -197,66 +146,47 @@ func (c *Client) MoveTaskPosition(projectID int, taskID int, columnID int, posit
 			"swimlane_id": swimlaneID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // MoveTaskToProject https://docs.kanboard.org/en/latest/api/task_procedures.html#movetasktoproject
 func (c *Client) MoveTaskToProject(params MoveTaskParams) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "moveTaskToProject",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "moveTaskToProject",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // DuplicateTaskToProject https://docs.kanboard.org/en/latest/api/task_procedures.html#duplicatetasktoproject
 func (c *Client) DuplicateTaskToProject(params MoveTaskParams) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "duplicateTaskToProject",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "duplicateTaskToProject",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // SearchTasks https://docs.kanboard.org/en/latest/api/task_procedures.html#searchtasks
-func (c *Client) SearchTasks(projectID int, query string) ([]Task, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "searchTasks",
-		ID:      1,
+func (c *Client) SearchTasks(projectID int, queryString string) ([]Task, error) {
+	query := request{
+		Client: c,
+		Method: "searchTasks",
 		Params: struct {
 			ProjectID int    `json:"project_id,string"`
 			Query     string `json:"query"`
 		}{
 			ProjectID: projectID,
-			Query:     query,
+			Query:     queryString,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseTasks{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeTasks()
+	return response, err
 }
 
 // TaskParams input for CreateTask
@@ -340,14 +270,34 @@ type Task struct {
 	Color               Color  `json:"color"`
 }
 
-type responseTask struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  Task   `json:"result"`
+func (r *request) decodeTasks() ([]Task, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string `json:"jsonrpc"`
+		ID      int    `json:"id"`
+		Result  []Task `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }
 
-type responseTasks struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  []Task `json:"result"`
+func (r *request) decodeTask() (Task, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return Task{}, err
+	}
+
+	body := struct {
+		JSONRPC string `json:"jsonrpc"`
+		ID      int    `json:"id"`
+		Result  Task   `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }

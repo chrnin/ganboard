@@ -4,88 +4,63 @@ import "encoding/json"
 
 // CreateSubtask https://docs.kanboard.org/en/latest/api/subtask_procedures.html#createsubtask
 func (c *Client) CreateSubtask(params SubtaskParams) (int, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "createSubtask",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "createSubtask",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // GetSubtask https://docs.kanboard.org/en/latest/api/subtask_procedures.html#getsubtask
 func (c *Client) GetSubtask(subtaskID int) (Subtask, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getSubtask",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getSubtask",
 		Params: map[string]int{
 			"subtask_id": subtaskID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseSubtask{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeSubtask()
+	return response, err
 }
 
 // GetAllSubtasks https://docs.kanboard.org/en/latest/api/subtask_procedures.html#getallsubtasks
 func (c *Client) GetAllSubtasks(taskID int) ([]Subtask, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getAllSubtasks",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getAllSubtasks",
 		Params: map[string]int{
 			"task_id": taskID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseSubtasks{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeSubtasks()
+	return response, err
 }
 
 // UpdateSubtask https://docs.kanboard.org/en/latest/api/subtask_procedures.html#updatesubtask
 func (c *Client) UpdateSubtask(params SubtaskParams) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "updateSubtask",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "updateSubtask",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // RemoveSubtask https://docs.kanboard.org/en/latest/api/subtask_procedures.html#removesubtask
 func (c *Client) RemoveSubtask(subtaskID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "removeSubtask",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "removeSubtask",
 		Params: map[string]int{
 			"subtask_id": subtaskID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // SubtaskParams input for CreateSubtask
@@ -97,18 +72,6 @@ type SubtaskParams struct {
 	TimeEstimated int    `json:"time_estimated,string,omitempty"`
 	TimeSpent     int    `json:"time_spent,string,omitempty"`
 	Status        int    `json:"status,string,omitempty"`
-}
-
-type responseSubtasks struct {
-	JSONRPC string    `json:"jsonrpc"`
-	ID      int       `json:"id"`
-	Result  []Subtask `json:"result"`
-}
-
-type responseSubtask struct {
-	JSONRPC string  `json:"jsonrpc"`
-	ID      int     `json:"id"`
-	Result  Subtask `json:"result"`
 }
 
 // Subtask type
@@ -123,4 +86,36 @@ type Subtask struct {
 	TimeEstimated int    `json:"time_estimated,string,omitempty"`
 	TimeSpent     int    `json:"time_spent,string,omitempty"`
 	Status        int    `json:"status,string,omitempty"`
+}
+
+func (r *request) decodeSubtasks() ([]Subtask, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string    `json:"jsonrpc"`
+		ID      int       `json:"id"`
+		Result  []Subtask `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
+}
+
+func (r *request) decodeSubtask() (Subtask, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return Subtask{}, err
+	}
+
+	body := struct {
+		JSONRPC string  `json:"jsonrpc"`
+		ID      int     `json:"id"`
+		Result  Subtask `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }

@@ -4,102 +4,74 @@ import "encoding/json"
 
 // GetAvailableActions https://docs.kanboard.org/en/latest/api/action_procedures.html#getavailableactions
 func (c *Client) GetAvailableActions() (map[string]string, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getAvailableActions",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getAvailableActions",
+		ID:     1,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseMapStringString{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeMapStringString()
+	return response, err
 }
 
 // GetAvailableActionEvents https://docs.kanboard.org/en/latest/api/action_procedures.html#getavailableactionevents
 func (c *Client) GetAvailableActionEvents() (map[string]string, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getAvailableActionEvents",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getAvailableActionEvents",
+		ID:     1,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseMapStringString{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeMapStringString()
+	return response, err
 }
 
 // GetCompatibleActionEvents https://docs.kanboard.org/en/latest/api/action_procedures.html#getcompatibleactionevents
 func (c *Client) GetCompatibleActionEvents(actionName string) (map[string]string, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getCompatibleActionEvents",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getCompatibleActionEvents",
 		Params: map[string]string{
 			"action_name": actionName,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseMapStringString{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeMapStringString()
+	return response, err
 }
 
 // GetActions https://docs.kanboard.org/en/latest/api/action_procedures.html#getactions
 func (c *Client) GetActions(projectID int) (Action, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getActions",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getActions",
 		Params: map[string]int{
 			"project_id": projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseAction{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeAction()
+	return response, err
 }
 
 // CreateAction https://docs.kanboard.org/en/latest/api/action_procedures.html#createaction
 func (c *Client) CreateAction(params ActionParams) (int, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "createAction",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "createAction",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // RemoveAction https://docs.kanboard.org/en/latest/api/action_procedures.html#createaction
 func (c *Client) RemoveAction(actionID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "removeAction",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "removeAction",
 		Params: map[string]int{
 			"action_id": actionID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // Action type
@@ -119,8 +91,18 @@ type ActionParams struct {
 	Params     map[string]string `json:"params"`
 }
 
-type responseAction struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  Action `json:"result"`
+func (r *request) decodeAction() (Action, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return Action{}, err
+	}
+
+	body := struct {
+		JSONRPC string `json:"jsonrpc"`
+		ID      int    `json:"id"`
+		Result  Action `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }

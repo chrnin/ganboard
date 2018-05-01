@@ -1,209 +1,143 @@
 package ganboard
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
 // CreateProject https://docs.kanboard.org/en/latest/api/project_procedures.html#createprojects
 func (c *Client) CreateProject(params ProjectParams) (int, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "createProject",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "createProject",
+		Params: params,
 	}
-
-	rsp, err := c.Request(request)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // GetAllProjects https://docs.kanboard.org/en/latest/api/project_procedures.html#getallprojects
 func (c *Client) GetAllProjects() ([]Project, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getAllProjects",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getAllProjects",
 	}
-
-	rsp, err := c.Request(request)
-	body := responseProjects{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeProjects()
+	return response, err
 }
 
 // GetProjectByID https://docs.kanboard.org/en/latest/api/project_procedures.html#getprojectbyid
 func (c *Client) GetProjectByID(id int) (Project, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getProjectById",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getProjectById",
 		Params: ProjectParams{
 			ProjectID: id,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseProject{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeProject()
+	return response, err
 }
 
 // GetProjectByName https://docs.kanboard.org/en/latest/api/project_procedures.html#getprojectbyname
 func (c *Client) GetProjectByName(name string) (Project, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getProjectByName",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getProjectByName",
 		Params: ProjectParams{
 			Name: name,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseProject{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeProject()
+	return response, err
 }
 
 // GetProjectByIdentifier https://docs.kanboard.org/en/latest/api/project_procedures.html#getprojectbyname
 func (c *Client) GetProjectByIdentifier(identifier string) (Project, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getProjectByIdentifier",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getProjectByIdentifier",
 		Params: ProjectParams{
 			Identifier: identifier,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseProject{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeProject()
+	return response, err
 }
 
 // UpdateProject https://docs.kanboard.org/en/latest/api/project_procedures.html#updateproject
 func (c *Client) UpdateProject(params ProjectParams) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "updateProject",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "updateProject",
+		Params: params,
 	}
-
-	rsp, err := c.Request(r)
-	body := response{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	if body.Result == nil {
-		return false, err
-	}
-	return true, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // RemoveProject https://docs.kanboard.org/en/latest/api/project_procedures.html#removeproject
 func (c *Client) RemoveProject(projectID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "updateProject",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "updateProject",
 		Params: ProjectParams{
 			ProjectID: projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := response{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	if body.Result == nil {
-		return false, err
-	}
-	return true, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // EnableProject https://docs.kanboard.org/en/latest/api/project_procedures.html#enableproject
 func (c *Client) EnableProject(projectID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "enableProject",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "enableProject",
 		Params: ProjectParams{
 			ProjectID: projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := response{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	if body.Result == nil {
-		return false, err
-	}
-	return true, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // DisableProject https://docs.kanboard.org/en/latest/api/project_procedures.html#enableproject
 func (c *Client) DisableProject(projectID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "disableProject",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "disableProject",
 		Params: ProjectParams{
 			ProjectID: projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := response{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-	if body.Result == nil {
-		return false, err
-	}
-	return true, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // GetProjectActivity https://docs.kanboard.org/en/latest/api/project_procedures.html#getprojectactivity
+// FIXME describe Activity type
 func (c *Client) GetProjectActivity(projectID int) (interface{}, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getProjectActivity",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getProjectActivity",
 		Params: ProjectParams{
 			ProjectID: projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := new(interface{})
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body, err
+	response, err := query.decodeInterface()
+	return response, err
 }
 
 // GetProjectActivities https://docs.kanboard.org/en/latest/api/project_procedures.html#getprojectactivity
+// FIXME describe Activity type
 func (c *Client) GetProjectActivities(projectID []int) (interface{}, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getProjectActivity",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getProjectActivity",
 		Params: map[string][]int{
 			"project_ids": projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := new(interface{})
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body, err
+	response, err := query.decodeInterface()
+	return response, err
 }
 
 // TODO: create Event type to decode Json in usable structs. Missing data type documentation.
@@ -215,18 +149,6 @@ type ProjectParams struct {
 	Identifier  string `json:"identifier,omitempty"`
 	Email       string `json:"email,omitempty"`
 	Description string `json:"decription,omitempty"`
-}
-
-type responseProjects struct {
-	JSONRPC string    `json:"jsonrpc"`
-	ID      int       `json:"id"`
-	Result  []Project `json:"result"`
-}
-
-type responseProject struct {
-	JSONRPC string  `json:"jsonrpc"`
-	ID      int     `json:"id"`
-	Result  Project `json:"result"`
 }
 
 // Project reflects getAllProjects method
@@ -255,4 +177,36 @@ type Project struct {
 		Calendar string `json:"calendar"`
 		List     string `json:"list"`
 	} `json:"url"`
+}
+
+func (r *request) decodeProjects() ([]Project, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string    `json:"jsonrpc"`
+		ID      int       `json:"id"`
+		Result  []Project `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
+}
+
+func (r *request) decodeProject() (Project, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return Project{}, err
+	}
+
+	body := struct {
+		JSONRPC string  `json:"jsonrpc"`
+		ID      int     `json:"id"`
+		Result  Project `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }

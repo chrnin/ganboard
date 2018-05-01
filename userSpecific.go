@@ -6,139 +6,81 @@ import (
 
 // GetMe https://docs.kanboard.org/en/latest/api/me_procedures.html#getme
 func (c *Client) GetMe() (User, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getMe",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getMe",
 	}
-
-	rsp, err := c.Request(request)
-	body := responseUser{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeUser()
+	return response, err
 }
 
 // GetMyDashboard https://docs.kanboard.org/en/latest/api/me_procedures.html#getmydashboard
 // FIXME documentation doesn't fit result.
 func (c *Client) GetMyDashboard() (interface{}, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getMyDashboard",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getMyDashboard",
+		ID:     1,
 	}
-
-	rsp, err := c.Request(request)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body, err
+	response, err := query.decodeInterface()
+	return response, err
 }
 
 // GetMyActivityStream https://docs.kanboard.org/en/latest/api/me_procedures.html#getmyactivitystream
 func (c *Client) GetMyActivityStream() ([]Activity, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getMyActivityStream",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getMyActivityStream",
 	}
-
-	rsp, err := c.Request(request)
-	body := responseActivityStream{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeActivities()
+	return response, err
 }
 
 // CreateMyPrivateProject https://docs.kanboard.org/en/latest/api/me_procedures.html#createmyprivateproject
 func (c *Client) CreateMyPrivateProject(params PrivateProjectParams) (int, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "createMyPrivateProject",
-		ID:      1,
-		Params:  params,
+	query := request{
+		Client: c,
+		Method: "createMyPrivateProject",
+		Params: params,
 	}
-
-	rsp, err := c.Request(request)
-	body := response{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result.(int), err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // GetMyProjectList https://docs.kanboard.org/en/latest/api/me_procedures.html#getmyprojectslist
 func (c *Client) GetMyProjectList() (map[int]string, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getMyProjectsList",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getMyProjectsList",
 	}
-
-	rsp, err := c.Request(request)
-	body := responseProjectList{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeMapIntString()
+	return response, err
 }
 
 // GetMyOverDueTasks https://docs.kanboard.org/en/latest/api/me_procedures.html#getmyoverduetasks
 func (c *Client) GetMyOverDueTasks() ([]Task, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getMyOverDueTasks",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getMyOverDueTasks",
 	}
-
-	rsp, err := c.Request(request)
-	body := responseOverdueTasks{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeTasks()
+	return response, err
 }
 
 // GetMyProjects https://docs.kanboard.org/en/latest/api/me_procedures.html#getmyprojects
 func (c *Client) GetMyProjects() ([]Project, error) {
-	request := request{
-		JSONRPC: "2.0",
-		Method:  "getMyProjects",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getMyProjects",
 	}
-
-	rsp, err := c.Request(request)
-	body := responseProjects{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeProjects()
+	return response, err
 }
 
 // PrivateProjectParams parameters for CreateMyPrivateProject
 type PrivateProjectParams struct {
 	Name        string `json:"name"`
 	Description string `json:"description,omitempty"`
-}
-
-type responseOverdueTasks struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  []Task `json:"result"`
-}
-
-type responseProjectList struct {
-	JSONRPC string         `json:"jsonrpc"`
-	ID      int            `json:"id"`
-	Result  map[int]string `json:"result"`
-}
-
-type responseDashboard struct {
-	JSONRPC string    `json:"jsonrpc"`
-	ID      int       `json:"id"`
-	Result  Dashboard `json:"result"`
-}
-
-type responseActivityStream struct {
-	JSONRPC string     `json:"jsonrpc"`
-	ID      int        `json:"id"`
-	Result  []Activity `json:"result"`
 }
 
 // Dashboard type
@@ -165,4 +107,36 @@ type Activity struct {
 	Author         string        `json:"author"`
 	EventTitle     string        `json:"event_title"`
 	EventContent   string        `json:"event_content"`
+}
+
+func (r *request) decodeDashboard() (Dashboard, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return Dashboard{}, err
+	}
+
+	body := struct {
+		JSONRPC string    `json:"jsonrpc"`
+		ID      int       `json:"id"`
+		Result  Dashboard `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
+}
+
+func (r *request) decodeActivities() ([]Activity, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string     `json:"jsonrpc"`
+		ID      int        `json:"id"`
+		Result  []Activity `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }

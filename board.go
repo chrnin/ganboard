@@ -6,20 +6,15 @@ import (
 
 // GetBoard https://docs.kanboard.org/en/latest/api/board_procedures.html#getboard
 func (c *Client) GetBoard(projectID int) ([]Board, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getBoard",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getBoard",
 		Params: map[string]int{
 			"project_id": projectID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := new(responseBoards)
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoards()
+	return response, err
 }
 
 // Board type
@@ -50,8 +45,18 @@ type Column struct {
 	Score       int    `json:"score"`
 }
 
-type responseBoards struct {
-	JSONRPC string  `json:"jsonrpc"`
-	ID      int     `json:"id"`
-	Result  []Board `json:"result"`
+func (r *request) decodeBoards() ([]Board, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string  `json:"jsonrpc"`
+		ID      int     `json:"id"`
+		Result  []Board `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }

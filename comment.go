@@ -4,10 +4,9 @@ import "encoding/json"
 
 // CreateComment https://docs.kanboard.org/en/latest/api/comment_procedures.html#createcomment
 func (c *Client) CreateComment(taskID int, userID int, content string) (int, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "createComment",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "createComment",
 		Params: struct {
 			TaskID  int    `json:"task_id,string"`
 			UserID  int    `json:"user_id,string"`
@@ -18,56 +17,41 @@ func (c *Client) CreateComment(taskID int, userID int, content string) (int, err
 			Content: content,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseInt{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeInt()
+	return response, err
 }
 
 // GetComment https://docs.kanboard.org/en/latest/api/comment_procedures.html#getcomment
 func (c *Client) GetComment(commentID int) (Comment, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getComment",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getComment",
 		Params: map[string]int{
 			"comment_id": commentID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseComment{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeComment()
+	return response, err
 }
 
 // GetAllComments https://docs.kanboard.org/en/latest/api/comment_procedures.html#getallcomments
 func (c *Client) GetAllComments(taskID int) ([]Comment, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "getAllComments",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "getAllComments",
 		Params: map[string]int{
 			"task_id": taskID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseComments{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeComments()
+	return response, err
 }
 
 // UpdateComment https://docs.kanboard.org/en/latest/api/comment_procedures.html#updatecomment
 func (c *Client) UpdateComment(commentID int, content string) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "updateComment",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "updateComment",
 		Params: struct {
 			CommentID int    `json:"id,string"`
 			Content   string `json:"content"`
@@ -76,30 +60,21 @@ func (c *Client) UpdateComment(commentID int, content string) (bool, error) {
 			Content:   content,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // RemoveComment https://docs.kanboard.org/en/latest/api/comment_procedures.html#removecomment
 func (c *Client) RemoveComment(commentID int) (bool, error) {
-	r := request{
-		JSONRPC: "2.0",
-		Method:  "updateComment",
-		ID:      1,
+	query := request{
+		Client: c,
+		Method: "updateComment",
 		Params: map[string]int{
 			"comment_id": commentID,
 		},
 	}
-
-	rsp, err := c.Request(r)
-	body := responseBoolean{}
-	err = json.NewDecoder(rsp.Body).Decode(&body)
-
-	return body.Result, err
+	response, err := query.decodeBoolean()
+	return response, err
 }
 
 // Comment type
@@ -113,14 +88,34 @@ type Comment struct {
 	Name         string `json:"name"`
 }
 
-type responseComment struct {
-	JSONRPC string  `json:"jsonrpc"`
-	ID      int     `json:"id"`
-	Result  Comment `json:"result"`
+func (r *request) decodeComments() ([]Comment, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := struct {
+		JSONRPC string    `json:"jsonrpc"`
+		ID      int       `json:"id"`
+		Result  []Comment `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }
 
-type responseComments struct {
-	JSONRPC string    `json:"jsonrpc"`
-	ID      int       `json:"id"`
-	Result  []Comment `json:"result"`
+func (r *request) decodeComment() (Comment, error) {
+	rsp, err := r.Client.Request(*r)
+	if err != nil {
+		return Comment{}, err
+	}
+
+	body := struct {
+		JSONRPC string  `json:"jsonrpc"`
+		ID      int     `json:"id"`
+		Result  Comment `json:"result"`
+	}{}
+
+	err = json.NewDecoder(rsp.Body).Decode(&body)
+	return body.Result, err
 }
