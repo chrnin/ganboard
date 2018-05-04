@@ -3,7 +3,9 @@ package ganboard
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
+	"strconv"
 )
 
 // Client access to kanboard API methods
@@ -37,8 +39,13 @@ func (c *Client) Request(request request) (*http.Response, error) {
 	// set auth and send to kanboard
 	req.SetBasicAuth(c.Username, c.Password)
 	response, err := httpClient.Do(req)
-
-	return response, err
+	if err != nil {
+		return response, err
+	}
+	if response.StatusCode != 200 {
+		return response, errors.New(response.Status)
+	}
+	return response, nil
 }
 
 type response struct {
@@ -62,12 +69,12 @@ func (r *request) decodeInt() (int, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
-		Result  int    `json:"result,string"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  FlexInt `json:"result"`
 	}{}
 	err = json.NewDecoder(rsp.Body).Decode(&body)
-	return body.Result, err
+	return int(body.Result), err
 }
 
 func (r *request) decodeInterface() (interface{}, error) {
@@ -166,11 +173,31 @@ func (r *request) decodeMapIntString() (map[int]string, error) {
 
 	body := struct {
 		JSONRPC string         `json:"jsonrpc"`
-		ID      int            `json:"id"`
+		ID      FlexInt        `json:"id"`
 		Result  map[int]string `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 
 	return body.Result, err
+}
+
+// FlexInt unpredictable quoted int provided by JSON
+type FlexInt int
+
+// UnmarshalJSON decodes gracefully int from json even if it is surrounded by quotes
+func (fi *FlexInt) UnmarshalJSON(b []byte) error {
+	if b[0] != '"' {
+		return json.Unmarshal(b, (*int)(fi))
+	}
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return err
+	}
+	*fi = FlexInt(i)
+	return nil
 }

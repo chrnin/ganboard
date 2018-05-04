@@ -1,6 +1,8 @@
 package ganboard
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 // CreateProject https://docs.kanboard.org/en/latest/api/project_procedures.html#createprojects
 func (c *Client) CreateProject(params ProjectParams) (int, error) {
@@ -187,10 +189,13 @@ func (r *request) decodeProjects() ([]Project, error) {
 
 	body := struct {
 		JSONRPC string    `json:"jsonrpc"`
-		ID      int       `json:"id"`
+		ID      FlexInt   `json:"id"`
 		Result  []Project `json:"result"`
 	}{}
-
+	// var buf bytes.Buffer
+	// tee := io.TeeReader(rsp.Body, &buf)
+	// stringjson, err := ioutil.ReadAll(tee)
+	// fmt.Println(string(stringjson))
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 	return body.Result, err
 }
@@ -203,10 +208,13 @@ func (r *request) decodeProject() (Project, error) {
 
 	body := struct {
 		JSONRPC string  `json:"jsonrpc"`
-		ID      int     `json:"id"`
+		ID      FlexInt `json:"id"`
 		Result  Project `json:"result"`
 	}{}
-
+	// var buf bytes.Buffer
+	// tee := io.TeeReader(rsp.Body, &buf)
+	// stringjson, err := ioutil.ReadAll(tee)
+	// fmt.Println(string(stringjson))
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 	return body.Result, err
 }

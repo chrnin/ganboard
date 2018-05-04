@@ -1,6 +1,8 @@
 package ganboard
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 // CreateUser https://docs.kanboard.org/en/latest/api/user_procedures.html#createuser
 func (c *Client) CreateUser(params UserParams) (int, error) {
@@ -136,22 +138,28 @@ type UserParams struct {
 
 // User type
 type User struct {
-	ID                   int    `json:"id,string"`
+	ID                   int    `json:"id"`
 	UserName             string `json:"username"`
 	Role                 string `json:"role"`
-	IDLdapUser           bool   `json:"is_ldap_user"`
+	IsLdapUser           bool   `json:"is_ldap_user"`
 	Name                 string `json:"name"`
 	Email                string `json:"email,omitempty"`
 	GoogleID             string `json:"google_id,omitempty"`
 	GithubID             string `json:"github_id,omitempty"`
+	GitlabID             string `json:"gitlab_id,omitempty"`
 	NotificationsEnabled int    `json:"notifications_enabled,string"`
 	Timezone             string `json:"timezone,omitempty"`
 	Language             string `json:"language,omitempty"`
-	DisableLoginForm     int    `json:"int,string"`
+	DisableLoginForm     int    `json:"disable_login_form,string"`
 	TwoFactorActivated   bool   `json:"twofactor_activated"`
 	TwoFactorSecret      bool   `json:"twofactor_secret"`
 	Token                string `json:"token"`
 	NotificationsFilter  int    `json:"notifications_filter,string"`
+	NbFailedLogin        int    `json:"nb_failed_login,string"`
+	LockExpirationDate   int    `json:"lock_expiration_date,string"`
+	IsActive             bool   `json:"int,string"`
+	AvatarPath           string `json:"avatar_path"`
+	APIAccesstoken       string `json:"api_access_token"`
 }
 
 func (r *request) decodeUser() (User, error) {
@@ -162,7 +170,7 @@ func (r *request) decodeUser() (User, error) {
 
 	body := struct {
 		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
+		ID      int    `json:"id,string"`
 		Result  User   `json:"result"`
 	}{}
 
@@ -178,7 +186,7 @@ func (r *request) decodeUsers() ([]User, error) {
 
 	body := struct {
 		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
+		ID      int    `json:"id,string"`
 		Result  []User `json:"result"`
 	}{}
 

@@ -7,7 +7,6 @@ func (c *Client) GetAvailableActions() (map[string]string, error) {
 	query := request{
 		Client: c,
 		Method: "getAvailableActions",
-		ID:     1,
 	}
 	response, err := query.decodeMapStringString()
 	return response, err
@@ -18,7 +17,6 @@ func (c *Client) GetAvailableActionEvents() (map[string]string, error) {
 	query := request{
 		Client: c,
 		Method: "getAvailableActionEvents",
-		ID:     1,
 	}
 	response, err := query.decodeMapStringString()
 	return response, err
