@@ -85,7 +85,7 @@ func (r *request) decodeInternalLink() (InternalLink, error) {
 
 	body := struct {
 		JSONRPC string       `json:"jsonrpc"`
-		ID      int          `json:"id"`
+		ID      FlexInt      `json:"id"`
 		Result  InternalLink `json:"result"`
 	}{}
 
@@ -101,7 +101,7 @@ func (r *request) decodeInternalLinks() ([]InternalLink, error) {
 
 	body := struct {
 		JSONRPC string         `json:"jsonrpc"`
-		ID      int            `json:"id"`
+		ID      FlexInt        `json:"id"`
 		Result  []InternalLink `json:"result"`
 	}{}
 

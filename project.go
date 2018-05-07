@@ -79,7 +79,7 @@ func (c *Client) UpdateProject(params ProjectParams) (bool, error) {
 func (c *Client) RemoveProject(projectID int) (bool, error) {
 	query := request{
 		Client: c,
-		Method: "updateProject",
+		Method: "removeProject",
 		Params: ProjectParams{
 			ProjectID: projectID,
 		},
@@ -150,6 +150,7 @@ type ProjectParams struct {
 	Name        string `json:"name,omitempty"`
 	Identifier  string `json:"identifier,omitempty"`
 	Email       string `json:"email,omitempty"`
+	OwnerID     int    `json:"owner_id,omitempty"`
 	Description string `json:"decription,omitempty"`
 }
 
@@ -192,10 +193,6 @@ func (r *request) decodeProjects() ([]Project, error) {
 		ID      FlexInt   `json:"id"`
 		Result  []Project `json:"result"`
 	}{}
-	// var buf bytes.Buffer
-	// tee := io.TeeReader(rsp.Body, &buf)
-	// stringjson, err := ioutil.ReadAll(tee)
-	// fmt.Println(string(stringjson))
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 	return body.Result, err
 }
@@ -211,10 +208,6 @@ func (r *request) decodeProject() (Project, error) {
 		ID      FlexInt `json:"id"`
 		Result  Project `json:"result"`
 	}{}
-	// var buf bytes.Buffer
-	// tee := io.TeeReader(rsp.Body, &buf)
-	// stringjson, err := ioutil.ReadAll(tee)
-	// fmt.Println(string(stringjson))
 	err = json.NewDecoder(rsp.Body).Decode(&body)
 	return body.Result, err
 }

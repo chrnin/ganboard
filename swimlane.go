@@ -187,7 +187,7 @@ func (r *request) decodeSwimlanes() ([]Swimlane, error) {
 
 	body := struct {
 		JSONRPC string     `json:"jsonrpc"`
-		ID      int        `json:"id"`
+		ID      FlexInt    `json:"id"`
 		Result  []Swimlane `json:"result"`
 	}{}
 
@@ -203,7 +203,7 @@ func (r *request) decodeSwimlane() (Swimlane, error) {
 
 	body := struct {
 		JSONRPC string   `json:"jsonrpc"`
-		ID      int      `json:"id"`
+		ID      FlexInt  `json:"id"`
 		Result  Swimlane `json:"result"`
 	}{}
 

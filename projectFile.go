@@ -110,9 +110,9 @@ func (r *request) decodeFiles() ([]File, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
-		Result  []File `json:"result"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  []File  `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)
@@ -126,9 +126,9 @@ func (r *request) decodeFile() (File, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
-		Result  File   `json:"result"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  File    `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)

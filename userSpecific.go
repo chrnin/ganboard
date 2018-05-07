@@ -117,7 +117,7 @@ func (r *request) decodeDashboard() (Dashboard, error) {
 
 	body := struct {
 		JSONRPC string    `json:"jsonrpc"`
-		ID      int       `json:"id"`
+		ID      FlexInt   `json:"id"`
 		Result  Dashboard `json:"result"`
 	}{}
 
@@ -133,7 +133,7 @@ func (r *request) decodeActivities() ([]Activity, error) {
 
 	body := struct {
 		JSONRPC string     `json:"jsonrpc"`
-		ID      int        `json:"id"`
+		ID      FlexInt    `json:"id"`
 		Result  []Activity `json:"result"`
 	}{}
 

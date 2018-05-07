@@ -37,7 +37,9 @@ func (c *Client) Request(request request) (*http.Response, error) {
 	}
 
 	// set auth and send to kanboard
+
 	req.SetBasicAuth(c.Username, c.Password)
+	//spew.Dump(req)
 	response, err := httpClient.Do(req)
 	if err != nil {
 		return response, err
@@ -50,7 +52,7 @@ func (c *Client) Request(request request) (*http.Response, error) {
 
 type response struct {
 	JSONRPC string      `json:"jsonrpc"`
-	ID      int         `json:"id"`
+	ID      FlexInt     `json:"id"`
 	Result  interface{} `json:"result"`
 }
 
@@ -74,6 +76,7 @@ func (r *request) decodeInt() (int, error) {
 		Result  FlexInt `json:"result"`
 	}{}
 	err = json.NewDecoder(rsp.Body).Decode(&body)
+
 	return int(body.Result), err
 }
 
@@ -85,7 +88,7 @@ func (r *request) decodeInterface() (interface{}, error) {
 
 	body := struct {
 		JSONRPC string      `json:"jsonrpc"`
-		ID      int         `json:"id"`
+		ID      FlexInt     `json:"id"`
 		Result  interface{} `json:"result"`
 	}{}
 	err = json.NewDecoder(rsp.Body).Decode(&body)
@@ -100,9 +103,9 @@ func (r *request) decodeString() (string, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
-		Result  string `json:"result"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  string  `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)
@@ -118,9 +121,9 @@ func (r *request) decodeBoolean() (bool, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
-		Result  bool   `json:"result"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  bool    `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)
@@ -137,7 +140,7 @@ func (r *request) decodeFloat64() (float64, error) {
 
 	body := struct {
 		JSONRPC string  `json:"jsonrpc"`
-		ID      int     `json:"id"`
+		ID      FlexInt `json:"id"`
 		Result  float64 `json:"result"`
 	}{}
 
@@ -155,7 +158,7 @@ func (r *request) decodeMapStringString() (map[string]string, error) {
 
 	body := struct {
 		JSONRPC string            `json:"jsonrpc"`
-		ID      int               `json:"id"`
+		ID      FlexInt           `json:"id"`
 		Result  map[string]string `json:"result"`
 	}{}
 
@@ -188,7 +191,10 @@ type FlexInt int
 // UnmarshalJSON decodes gracefully int from json even if it is surrounded by quotes
 func (fi *FlexInt) UnmarshalJSON(b []byte) error {
 	if b[0] != '"' {
-		return json.Unmarshal(b, (*int)(fi))
+		if string(b) != "false" {
+			return json.Unmarshal(b, (*int)(fi))
+		}
+		return errors.New("Waiting for Int, got false")
 	}
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {

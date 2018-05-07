@@ -96,7 +96,7 @@ func (r *request) decodeSubtasks() ([]Subtask, error) {
 
 	body := struct {
 		JSONRPC string    `json:"jsonrpc"`
-		ID      int       `json:"id"`
+		ID      FlexInt   `json:"id"`
 		Result  []Subtask `json:"result"`
 	}{}
 
@@ -112,7 +112,7 @@ func (r *request) decodeSubtask() (Subtask, error) {
 
 	body := struct {
 		JSONRPC string  `json:"jsonrpc"`
-		ID      int     `json:"id"`
+		ID      FlexInt `json:"id"`
 		Result  Subtask `json:"result"`
 	}{}
 

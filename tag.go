@@ -118,9 +118,9 @@ func (r *request) decodeTag() (Tag, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
-		Result  Tag    `json:"result"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  Tag     `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)
@@ -134,9 +134,9 @@ func (r *request) decodeTags() ([]Tag, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
-		Result  []Tag  `json:"result"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  []Tag   `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)

@@ -142,9 +142,9 @@ func (r *request) decodeGroup() (Group, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id"`
-		Result  Group  `json:"result"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  Group   `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)
@@ -159,7 +159,7 @@ func (r *request) decodeGroups() ([]Group, error) {
 
 	body := struct {
 		JSONRPC string  `json:"jsonrpc"`
-		ID      int     `json:"id"`
+		ID      FlexInt `json:"id"`
 		Result  []Group `json:"result"`
 	}{}
 

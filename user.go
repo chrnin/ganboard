@@ -169,9 +169,9 @@ func (r *request) decodeUser() (User, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id,string"`
-		Result  User   `json:"result"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  User    `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)
@@ -185,9 +185,9 @@ func (r *request) decodeUsers() ([]User, error) {
 	}
 
 	body := struct {
-		JSONRPC string `json:"jsonrpc"`
-		ID      int    `json:"id,string"`
-		Result  []User `json:"result"`
+		JSONRPC string  `json:"jsonrpc"`
+		ID      FlexInt `json:"id"`
+		Result  []User  `json:"result"`
 	}{}
 
 	err = json.NewDecoder(rsp.Body).Decode(&body)
