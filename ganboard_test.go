@@ -1,21 +1,22 @@
 package ganboard
 
 import (
+	"fmt"
 	"testing"
 )
 
-const (
-	AppToken = "85655db24a48fe6c85340fbedf9948feef798190ddc06ba345e8809d8384"
-	EndPoint = "http://localhost/kanboard-1.2.1/jsonrpc.php"
+var (
+	projectID = 0
+	client    = Client{
+		Endpoint: "http://localhost/kanboard-1.2.1/jsonrpc.php",
+		Username: "jsonrpc",
+		Password: "85655db24a48fe6c85340fbedf9948feef798190ddc06ba345e8809d8384",
+	}
 )
 
 func TestCreateProject(t *testing.T) {
 	t.Log("Creating test project, expected ID: 1")
-	client := Client{
-		Endpoint: EndPoint,
-		Username: "jsonrpc",
-		Password: AppToken,
-	}
+
 	params := ProjectParams{
 		Description: "Test Project for ganboard",
 		Identifier:  "TESTPROJECT",
@@ -35,14 +36,9 @@ func TestCreateProject(t *testing.T) {
 
 func TestProjectPermission(t *testing.T) {
 	t.Log("Setting project permissions for admin")
-	client := Client{
-		Endpoint: EndPoint,
-		Username: "jsonrpc",
-		Password: AppToken,
-	}
-
+	fmt.Println(projectID)
 	params := ProjectUserParams{
-		ProjectID: 1,
+		ProjectID: projectID,
 		UserID:    1,
 		Role:      "project-manager",
 	}
@@ -56,13 +52,25 @@ func TestProjectPermission(t *testing.T) {
 		}
 	}
 }
+
+func TestCreateTask(t *testing.T) {
+	params := TaskParams{
+		Title:     "Test task",
+		ProjectID: 1,
+	}
+	idTask, err := client.CreateTask(params)
+	if err != nil {
+		t.Errorf("Failed to create task: %s", err)
+	} else {
+		if idTask == 0 {
+			t.Error("Failed to create task: reason not provided")
+		} else {
+			t.Logf("Task Created, id = %d", idTask)
+		}
+	}
+}
 func TestRemoveProject(t *testing.T) {
 	t.Log("Removing test project")
-	client := Client{
-		Endpoint: EndPoint,
-		Username: "jsonrpc",
-		Password: AppToken,
-	}
 
 	result, err := client.RemoveProject(1)
 

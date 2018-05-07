@@ -30,7 +30,6 @@ func (c *Client) Request(request request) (*http.Response, error) {
 		c.Endpoint,
 		jsonrpc,
 	)
-
 	if err != nil {
 		rsp := new(http.Response)
 		return rsp, err

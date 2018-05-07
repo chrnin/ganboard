@@ -191,26 +191,26 @@ func (c *Client) SearchTasks(projectID int, queryString string) ([]Task, error) 
 
 // TaskParams input for CreateTask
 type TaskParams struct {
-	ID                  int       `json:"id,omitempty"`
-	Title               string    `json:"title"`
-	ProjectID           int       `json:"project_id,string"`
-	ColorID             string    `json:"color_id,omitempty"`
-	ColumnID            int       `json:"column_id,string,omitempty"`
-	OwnerID             int       `json:"owner_id,string,omitempty"`
-	CreatorID           int       `json:"creator_id,omitempty"`
-	DateDue             time.Time `json:"date_due,omitempty"`
-	Description         string    `json:"description,omitempty"`
-	CategoryID          int       `json:"category_id,string,omitempty"`
-	Score               int       `json:"score,string,omitempty"`
-	SwimlaneID          int       `json:"swimlane_id,string,omitempty"`
-	Priority            int       `json:"priority,omitempty"`
-	RecurrenceStatus    int       `json:"recurrence_status,string,omitempty"`
-	RecurrenceTrigger   int       `json:"recurrence_trigger,string,omitempty"`
-	RecurrenceFactor    int       `json:"recurrence_factor,string,omitempty"`
-	RecurrenceTimeframe int       `json:"recurrence_timeframe,string,omitempty"`
-	RecurrenceBaseDate  int       `json:"recurrence_basedate,string,omitempty"`
-	Tags                []string  `json:"tags,omitempty"`
-	DateStarted         time.Time `json:"date_started,omitempty"`
+	ID                  int        `json:"id,omitempty"`
+	Title               string     `json:"title"`
+	ProjectID           int        `json:"project_id"`
+	ColorID             string     `json:"color_id,omitempty"`
+	ColumnID            int        `json:"column_id,string,omitempty"`
+	OwnerID             int        `json:"owner_id,string,omitempty"`
+	CreatorID           int        `json:"creator_id,omitempty"`
+	DateDue             *time.Time `json:"date_due,omitempty"`
+	Description         string     `json:"description,omitempty"`
+	CategoryID          int        `json:"category_id,string,omitempty"`
+	Score               int        `json:"score,string,omitempty"`
+	SwimlaneID          int        `json:"swimlane_id,string,omitempty"`
+	Priority            int        `json:"priority,omitempty"`
+	RecurrenceStatus    int        `json:"recurrence_status,string,omitempty"`
+	RecurrenceTrigger   int        `json:"recurrence_trigger,string,omitempty"`
+	RecurrenceFactor    int        `json:"recurrence_factor,string,omitempty"`
+	RecurrenceTimeframe int        `json:"recurrence_timeframe,string,omitempty"`
+	RecurrenceBaseDate  int        `json:"recurrence_basedate,string,omitempty"`
+	Tags                []string   `json:"tags,omitempty"`
+	DateStarted         *time.Time `json:"date_started,omitempty"`
 }
 
 // MoveTaskParams input for MoveTaskToProject
