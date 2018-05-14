@@ -13,6 +13,7 @@ type Client struct {
 	Endpoint string
 	Username string
 	Password string
+	Project  Project
 }
 
 // Request sends jsonrpc request to kanboard and returns *http.Response.

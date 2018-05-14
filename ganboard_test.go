@@ -36,7 +36,6 @@ func TestCreateProject(t *testing.T) {
 
 func TestProjectPermission(t *testing.T) {
 	t.Log("Setting project permissions for admin")
-	fmt.Println(projectID)
 	params := ProjectUserParams{
 		ProjectID: projectID,
 		UserID:    1,
@@ -57,6 +56,7 @@ func TestCreateTask(t *testing.T) {
 	params := TaskParams{
 		Title:     "Test task",
 		ProjectID: 1,
+		DateDue: &time.Date
 	}
 	idTask, err := client.CreateTask(params)
 	if err != nil {
