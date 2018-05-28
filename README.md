@@ -5,6 +5,8 @@ JSON-RPC client for Kanboard written in Golang
 Implement all functions of Kanboard API.
 See <https://docs.kanboard.org/en/latest/api/> for more details
 
+*WIP: intense debugging ongoing, don't use this for serious purpose at the moment ! :)*
+
 ## Example
 
 ```go
