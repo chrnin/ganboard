@@ -209,6 +209,7 @@ type TaskParams struct {
 	RecurrenceFactor    int        `json:"recurrence_factor,string,omitempty"`
 	RecurrenceTimeframe int        `json:"recurrence_timeframe,string,omitempty"`
 	RecurrenceBaseDate  int        `json:"recurrence_basedate,string,omitempty"`
+	Reference           string     `json:"reference"`
 	Tags                []string   `json:"tags,omitempty"`
 	DateStarted         *time.Time `json:"date_started,omitempty"`
 }
